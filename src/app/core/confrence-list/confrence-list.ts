@@ -1,15 +1,23 @@
-import { Component } from '@angular/core';
+
+import { Component, signal } from '@angular/core';
 import { Conference } from '../../Models/conference';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-confrence-list',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './confrence-list.html',
   styleUrl: './confrence-list.css',
 })
 export class ConfrenceList {
-  confList: Conference[] = [
+
+  x = signal(2);
+
+  searchitem = signal('');
+
+  confList = signal<Conference[]>([
     {
       id: 1,
       titre: 'Angular Workshop',
@@ -20,7 +28,7 @@ export class ConfrenceList {
       imageUrl: 'images/conf.jpg',
       nbPlaces: 30,
       category: 'Technologie',
-      nbLikes: 0,
+      nbLikes: 3,
     },
     {
       id: 2,
@@ -34,7 +42,6 @@ export class ConfrenceList {
       category: 'Musique',
       nbLikes: 12,
     },
-
     {
       id: 3,
       titre: 'AI & Innovation Conference',
@@ -43,11 +50,10 @@ export class ConfrenceList {
       lieu: 'Hammamet',
       prix: 100,
       imageUrl: 'images/conf.jpg',
-      nbPlaces:0,
+      nbPlaces: 0,
       category: 'Technologie',
       nbLikes: 0,
     },
-
     {
       id: 4,
       titre: 'Startup Meetup',
@@ -60,5 +66,42 @@ export class ConfrenceList {
       category: 'Business',
       nbLikes: 0,
     },
-  ];
+  ]);
+
+  favoritelist = signal<Conference[]>([]);
+
+  // Fonction Favoris
+  addFavorite(conf: Conference) {
+
+    if (this.favoritelist().find(c => c.id === conf.id)) {
+      alert("Cette conférence existe déjà dans les favoris !");
+    } else {
+      this.favoritelist.update(list => [...list, conf]);
+      alert("Conférence ajoutée aux favoris !");
+    }
+
+  }
+
+  // Fonction Like
+  liker(conf: Conference) {
+
+    this.confList.update(list =>
+      list.map(c =>
+        c.id === conf.id
+          ? { ...c, nbLikes: c.nbLikes + 1 }
+          : c
+      )
+    );
+
+  }
+
+  // Fonction Search
+  filter() {
+
+    return this.confList().filter(conf =>
+      conf.titre.toLowerCase().includes(this.searchitem().toLowerCase())
+    );
+
+  }
+
 }

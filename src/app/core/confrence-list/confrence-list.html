@@ -1,18 +1,34 @@
-<h1>Liste des conférences</h1>
 
+<h2>Liste des conférences</h2>
 
-<div class="container">
-    @for(conf of confList;track conf.id){
-        @if(conf.nbPlaces>0){
-    <div class="card" style="width: 18rem;">
-    <img src="{{conf.imageUrl}}" class="card-img-top" alt="conf_image">
-    <div class="card-body">
-        <h5 class="card-title">{{conf.titre|uppercase}}</h5>
-        <p class="card-text">{{conf.category}}</p>
-        <a href="#" class="btn btn-primary">add to favorite</a>
-    </div>
-    </div>
-   } }@empty {
-        <h2>aucune conférence n'est disponible pour le moment</h2>
-    }
+<input
+  type="text"
+  placeholder="Rechercher une conférence..."
+  [ngModel]="searchitem()"
+  (ngModelChange)="searchitem.set($event)"
+>
+
+<div *ngFor="let conf of filter()">
+
+  <h3>{{ conf.titre }}</h3>
+
+  <p>{{ conf.description }}</p>
+  <p>Lieu : {{ conf.lieu }}</p>
+  <p>Prix : {{ conf.prix }} DT</p>
+  <p>Likes : {{ conf.nbLikes }}</p>
+
+  <button (click)="liker(conf)">
+    Like ❤️
+  </button>
+
+  <button (click)="addFavorite(conf)">
+    Ajouter aux favoris ⭐
+  </button>
+
+</div>
+
+<h2>Mes favoris</h2>
+
+<div *ngFor="let fav of favoritelist()">
+  <p>{{ fav.titre }}</p>
 </div>
